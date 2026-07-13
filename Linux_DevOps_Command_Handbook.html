@@ -1,0 +1,3036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux Command Handbook — DevOps Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:       #0f1b2d;
+  --navy2:      #162236;
+  --teal:       #00b4d8;
+  --teal2:      #0096b7;
+  --teal-dim:   #003d52;
+  --gold:       #f4a620;
+  --gold-dim:   #3d2a00;
+  --green:      #4ade80;
+  --red:        #f87171;
+  --slate:      #94a3b8;
+  --slate2:     #cbd5e1;
+  --border:     #1e3448;
+  --code-bg:    #0a1628;
+  --card-bg:    #131f30;
+  --cat-bg:     #0d1a28;
+  --surface:    #1a2d42;
+  --white:      #f0f6ff;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--navy);
+  color: var(--slate2);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ── Sidebar ─────────────────────────────────────── */
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: var(--navy2);
+  border-right: 1px solid var(--border);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-brand {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--teal);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.brand-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.2;
+}
+.brand-sub {
+  font-size: 11px;
+  color: var(--slate);
+  margin-top: 4px;
+}
+
+.sidebar-search {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.search-input {
+  width: 100%;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 12px;
+  color: var(--white);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  outline: none;
+  transition: border-color .2s;
+}
+.search-input::placeholder { color: var(--slate); }
+.search-input:focus { border-color: var(--teal); }
+
+.nav-list { padding: 8px 8px; flex: 1; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--slate);
+  font-size: 12px;
+  font-weight: 500;
+  transition: all .15s;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--border); color: var(--white); }
+.nav-item.active { background: var(--teal-dim); color: var(--teal); border-left: 3px solid var(--teal); }
+.nav-icon { font-size: 14px; flex-shrink: 0; }
+.nav-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--slate);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Main ─────────────────────────────────────────── */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+/* ── Hero ─────────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2040 40%, #0a1628 100%);
+  padding: 60px 60px 50px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(0,180,216,0.08), transparent);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--teal);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+.hero-title span { color: var(--teal); }
+.hero-desc {
+  font-size: 16px;
+  color: var(--slate);
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--teal);
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--slate);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── TOC ──────────────────────────────────────────── */
+.toc-section {
+  padding: 40px 60px;
+  border-bottom: 1px solid var(--border);
+  background: var(--cat-bg);
+}
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--teal);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 6px;
+}
+.toc-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--slate2);
+  font-size: 12px;
+  transition: all .15s;
+}
+.toc-item:hover { border-color: var(--teal); color: var(--white); background: var(--navy2); }
+.toc-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--teal); min-width: 24px; }
+.toc-icon { font-size: 14px; }
+.toc-name { flex: 1; font-weight: 500; }
+.toc-count { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--slate); white-space: nowrap; }
+
+/* ── Content ──────────────────────────────────────── */
+.content { padding: 0 60px 80px; }
+
+/* ── Category Section ─────────────────────────────── */
+.category {
+  padding-top: 56px;
+}
+.cat-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.cat-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal);
+  background: var(--teal-dim);
+  border: 1px solid var(--teal2);
+  border-radius: 6px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.cat-title-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+.cat-icon { font-size: 20px; }
+.cat-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--white);
+}
+.cat-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--slate);
+  white-space: nowrap;
+}
+.cat-desc {
+  font-size: 13px;
+  color: var(--slate);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  padding-left: 2px;
+}
+
+/* ── Commands Grid ────────────────────────────────── */
+.commands-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  gap: 16px;
+}
+
+/* ── Command Card ─────────────────────────────────── */
+.cmd-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.cmd-card:hover {
+  border-color: var(--teal2);
+  box-shadow: 0 0 0 1px rgba(0,150,183,0.2), 0 8px 24px rgba(0,0,0,0.3);
+}
+.cmd-header {
+  background: #0a1e35;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.cmd-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: #7dd3fc;
+  letter-spacing: 0.5px;
+}
+.cmd-body {
+  padding: 0;
+}
+.purpose-row {
+  padding: 14px 16px;
+  background: rgba(244,166,32,0.05);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.purpose-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gold);
+  white-space: nowrap;
+  padding-top: 1px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.purpose-text {
+  font-size: 12.5px;
+  color: var(--slate2);
+  line-height: 1.6;
+}
+.syntax-row {
+  padding: 14px 16px;
+}
+.syntax-label, .examples-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--slate);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.examples-label { margin-top: 12px; }
+.syntax-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #a5f3fc;
+  white-space: pre;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+.examples-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.example-line {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: #86efac;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.5;
+}
+.example-line::before {
+  content: '$ ';
+  color: #4ade80;
+  opacity: 0.5;
+}
+
+/* ── Search overlay ───────────────────────────────── */
+.no-results {
+  text-align: center;
+  padding: 60px;
+  color: var(--slate);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  display: none;
+}
+
+/* ── Back to top ──────────────────────────────────── */
+.back-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--teal);
+  color: var(--navy);
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 18px;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,180,216,0.4);
+  transition: transform .15s;
+  z-index: 100;
+  text-decoration: none;
+}
+.back-top:hover { transform: scale(1.1); }
+.back-top.visible { display: flex; }
+
+/* ── Print styles ─────────────────────────────────── */
+@media print {
+  .sidebar { display: none; }
+  .main { width: 100%; }
+  .cmd-card { break-inside: avoid; }
+  .category { break-before: page; }
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .hero { padding: 40px 24px; }
+  .toc-section { padding: 30px 24px; }
+  .content { padding: 0 24px 60px; }
+  .commands-grid { grid-template-columns: 1fr; }
+}
+
+/* Fade-in animation */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.cmd-card { animation: fadeUp .3s ease both; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-tag">Linux Handbook</div>
+    <div class="brand-title">DevOps<br>Command Ref</div>
+    <div class="brand-sub">127 commands · 20 categories</div>
+  </div>
+  <div class="sidebar-search">
+    <input type="text" class="search-input" id="searchInput" placeholder="Search commands...">
+  </div>
+  <div class="nav-list" id="navList">
+    <a href="#cat-0" class="nav-item" title="File & Directory Management"><span class="nav-icon">📁</span><span class="nav-text">File &amp; Directory Management</span></a><a href="#cat-1" class="nav-item" title="File Permissions & Ownership"><span class="nav-icon">🔐</span><span class="nav-text">File Permissions &amp; Ownership</span></a><a href="#cat-2" class="nav-item" title="Process Management"><span class="nav-icon">⚙️</span><span class="nav-text">Process Management</span></a><a href="#cat-3" class="nav-item" title="System Monitoring"><span class="nav-icon">📊</span><span class="nav-text">System Monitoring</span></a><a href="#cat-4" class="nav-item" title="Networking"><span class="nav-icon">🌐</span><span class="nav-text">Networking</span></a><a href="#cat-5" class="nav-item" title="Disk & Storage"><span class="nav-icon">💾</span><span class="nav-text">Disk &amp; Storage</span></a><a href="#cat-6" class="nav-item" title="Package Management"><span class="nav-icon">📦</span><span class="nav-text">Package Management</span></a><a href="#cat-7" class="nav-item" title="Users & Groups"><span class="nav-icon">👤</span><span class="nav-text">Users &amp; Groups</span></a><a href="#cat-8" class="nav-item" title="Logs & Troubleshooting"><span class="nav-icon">🔍</span><span class="nav-text">Logs &amp; Troubleshooting</span></a><a href="#cat-9" class="nav-item" title="Text Processing"><span class="nav-icon">📝</span><span class="nav-text">Text Processing</span></a><a href="#cat-10" class="nav-item" title="Searching & Filtering"><span class="nav-icon">🔎</span><span class="nav-text">Searching &amp; Filtering</span></a><a href="#cat-11" class="nav-item" title="Archiving & Compression"><span class="nav-icon">🗜️</span><span class="nav-text">Archiving &amp; Compression</span></a><a href="#cat-12" class="nav-item" title="SSH & Remote Access"><span class="nav-icon">🔑</span><span class="nav-text">SSH &amp; Remote Access</span></a><a href="#cat-13" class="nav-item" title="Service Management (systemd)"><span class="nav-icon">🔧</span><span class="nav-text">Service Management (systemd)</span></a><a href="#cat-14" class="nav-item" title="Cron Jobs & Automation"><span class="nav-icon">⏰</span><span class="nav-text">Cron Jobs &amp; Automation</span></a><a href="#cat-15" class="nav-item" title="Environment Variables"><span class="nav-icon">🌿</span><span class="nav-text">Environment Variables</span></a><a href="#cat-16" class="nav-item" title="Shell Scripting Basics"><span class="nav-icon">📜</span><span class="nav-text">Shell Scripting Basics</span></a><a href="#cat-17" class="nav-item" title="DevOps Productivity Commands"><span class="nav-icon">⚡</span><span class="nav-text">DevOps Productivity Commands</span></a><a href="#cat-18" class="nav-item" title="Kubernetes & Docker Linux Commands"><span class="nav-icon">🐳</span><span class="nav-text">Kubernetes &amp; Docker Linux Commands</span></a><a href="#cat-19" class="nav-item" title="CI/CD Troubleshooting Commands"><span class="nav-icon">🚀</span><span class="nav-text">CI/CD Troubleshooting Commands</span></a>
+  </div>
+  <div class="sidebar-footer">Beginner → Advanced · 2025</div>
+</nav>
+
+<!-- Main content -->
+<main class="main" id="mainContent">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">// DevOps Linux Reference</div>
+    <h1 class="hero-title">Linux Command<br><span>Handbook</span></h1>
+    <p class="hero-desc">A complete, production-ready reference for DevOps engineers. From filesystem basics to Kubernetes debugging — every command you need, with real-world examples.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-val">127+</span><span class="stat-label">Commands</span></div>
+      <div class="stat"><span class="stat-val">20</span><span class="stat-label">Categories</span></div>
+      <div class="stat"><span class="stat-val">∞</span><span class="stat-label">Use Cases</span></div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc-section">
+    <div class="section-label">// Table of Contents</div>
+    <div class="toc-grid"><a href="#cat-0" class="toc-item"><span class="toc-num">01</span><span class="toc-icon">📁</span><span class="toc-name">File &amp; Directory Management</span><span class="toc-count">10 cmds</span></a><a href="#cat-1" class="toc-item"><span class="toc-num">02</span><span class="toc-icon">🔐</span><span class="toc-name">File Permissions &amp; Ownership</span><span class="toc-count">6 cmds</span></a><a href="#cat-2" class="toc-item"><span class="toc-num">03</span><span class="toc-icon">⚙️</span><span class="toc-name">Process Management</span><span class="toc-count">8 cmds</span></a><a href="#cat-3" class="toc-item"><span class="toc-num">04</span><span class="toc-icon">📊</span><span class="toc-name">System Monitoring</span><span class="toc-count">8 cmds</span></a><a href="#cat-4" class="toc-item"><span class="toc-num">05</span><span class="toc-icon">🌐</span><span class="toc-name">Networking</span><span class="toc-count">10 cmds</span></a><a href="#cat-5" class="toc-item"><span class="toc-num">06</span><span class="toc-icon">💾</span><span class="toc-name">Disk &amp; Storage</span><span class="toc-count">6 cmds</span></a><a href="#cat-6" class="toc-item"><span class="toc-num">07</span><span class="toc-icon">📦</span><span class="toc-name">Package Management</span><span class="toc-count">5 cmds</span></a><a href="#cat-7" class="toc-item"><span class="toc-num">08</span><span class="toc-icon">👤</span><span class="toc-name">Users &amp; Groups</span><span class="toc-count">6 cmds</span></a><a href="#cat-8" class="toc-item"><span class="toc-num">09</span><span class="toc-icon">🔍</span><span class="toc-name">Logs &amp; Troubleshooting</span><span class="toc-count">5 cmds</span></a><a href="#cat-9" class="toc-item"><span class="toc-num">10</span><span class="toc-icon">📝</span><span class="toc-name">Text Processing</span><span class="toc-count">7 cmds</span></a><a href="#cat-10" class="toc-item"><span class="toc-num">11</span><span class="toc-icon">🔎</span><span class="toc-name">Searching &amp; Filtering</span><span class="toc-count">5 cmds</span></a><a href="#cat-11" class="toc-item"><span class="toc-num">12</span><span class="toc-icon">🗜️</span><span class="toc-name">Archiving &amp; Compression</span><span class="toc-count">4 cmds</span></a><a href="#cat-12" class="toc-item"><span class="toc-num">13</span><span class="toc-icon">🔑</span><span class="toc-name">SSH &amp; Remote Access</span><span class="toc-count">5 cmds</span></a><a href="#cat-13" class="toc-item"><span class="toc-num">14</span><span class="toc-icon">🔧</span><span class="toc-name">Service Management (systemd)</span><span class="toc-count">6 cmds</span></a><a href="#cat-14" class="toc-item"><span class="toc-num">15</span><span class="toc-icon">⏰</span><span class="toc-name">Cron Jobs &amp; Automation</span><span class="toc-count">4 cmds</span></a><a href="#cat-15" class="toc-item"><span class="toc-num">16</span><span class="toc-icon">🌿</span><span class="toc-name">Environment Variables</span><span class="toc-count">5 cmds</span></a><a href="#cat-16" class="toc-item"><span class="toc-num">17</span><span class="toc-icon">📜</span><span class="toc-name">Shell Scripting Basics</span><span class="toc-count">6 cmds</span></a><a href="#cat-17" class="toc-item"><span class="toc-num">18</span><span class="toc-icon">⚡</span><span class="toc-name">DevOps Productivity Commands</span><span class="toc-count">6 cmds</span></a><a href="#cat-18" class="toc-item"><span class="toc-num">19</span><span class="toc-icon">🐳</span><span class="toc-name">Kubernetes &amp; Docker Linux Commands</span><span class="toc-count">7 cmds</span></a><a href="#cat-19" class="toc-item"><span class="toc-num">20</span><span class="toc-icon">🚀</span><span class="toc-name">CI/CD Troubleshooting Commands</span><span class="toc-count">8 cmds</span></a></div>
+  </div>
+
+  <!-- Body -->
+  <div class="content" id="contentArea">
+    
+  <section class="category" id="cat-0">
+    <div class="cat-header">
+      <div class="cat-number">01</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">📁</span>
+        <h2 class="cat-title">File &amp; Directory Management</h2>
+      </div>
+      <div class="cat-count">10 commands</div>
+    </div>
+    <p class="cat-desc">Core commands for navigating and managing the Linux filesystem — essential for every DevOps engineer.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">ls</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">List files and directories. Use -la to reveal hidden files and permissions — critical when debugging deployment artifacts or config files.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ls [options] [directory]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ls -la /var/log</div><div class="example-line">ls -lh --sort=size /opt/app</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">cd</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Change the current working directory. Navigate between project repos, log directories, and config paths.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">cd [directory]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">cd /etc/nginx</div><div class="example-line">cd ~/projects/app</div><div class="example-line">cd -  # go back to previous dir</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">pwd</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Print working directory. Confirm your current path, especially inside shell scripts or after long navigation chains.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">pwd</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">pwd</div><div class="example-line">echo &quot;Current path: $(pwd)&quot;</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">mkdir</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Create directories. Use -p to create nested paths in one shot — essential when provisioning app directory trees.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">mkdir [options] directory</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">mkdir -p /opt/app/{logs,config,data}</div><div class="example-line">mkdir -m 755 /srv/deployments</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">rm</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Remove files or directories. Use with caution in production. -rf removes recursively — always double-check paths before running.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">rm [options] file/directory</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">rm -rf /tmp/build-artifacts</div><div class="example-line">rm -i important.conf  # interactive confirm</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">cp</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Copy files or directories. Use -r for directories and -p to preserve timestamps and permissions — important for backup scripts.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">cp [options] source destination</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">cp -rp /opt/app /opt/app.bak</div><div class="example-line">cp nginx.conf nginx.conf.orig</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="6">
+      <div class="cmd-header">
+        <span class="cmd-name">mv</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Move or rename files and directories. Used in deployment scripts to atomically swap config files or promote build outputs.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">mv [options] source destination</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">mv app.jar.new app.jar</div><div class="example-line">mv /tmp/release /opt/app/v2.1</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="7">
+      <div class="cmd-header">
+        <span class="cmd-name">find</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Search for files based on name, type, size, age, or permissions. Invaluable for auditing systems and cleanup automation.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">find [path] [options] [expression]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">find /var/log -name '*.log' -mtime +7 -delete</div><div class="example-line">find / -perm -4000 -type f 2&gt;/dev/null</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="8">
+      <div class="cmd-header">
+        <span class="cmd-name">touch</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Create an empty file or update a file's timestamp. Used to create lock files, trigger watchers, or initialize config placeholders.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">touch [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">touch /tmp/deploy.lock</div><div class="example-line">touch -t 202401011200 file.txt</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="9">
+      <div class="cmd-header">
+        <span class="cmd-name">ln</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Create hard or symbolic links. Symlinks are used extensively in config management (e.g., Nginx sites-enabled, alternatives system).</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ln [options] target link_name</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ln -s /opt/app/current /opt/app/latest</div><div class="example-line">ln -sf /etc/nginx/sites-available/app /etc/nginx/sites-enabled/app</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-1">
+    <div class="cat-header">
+      <div class="cat-number">02</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🔐</span>
+        <h2 class="cat-title">File Permissions &amp; Ownership</h2>
+      </div>
+      <div class="cat-count">6 commands</div>
+    </div>
+    <p class="cat-desc">Control who can read, write, and execute files. Critical for securing deployments and running services under correct user contexts.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">chmod</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Change file permissions using octal or symbolic notation. Misconfigured permissions are a common cause of deployment failures.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">chmod [options] mode file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">chmod 755 /opt/app/bin/start.sh</div><div class="example-line">chmod -R 644 /var/www/html</div><div class="example-line">chmod u+x deploy.sh</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">chown</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Change file ownership. Services should run as dedicated non-root users — chown enforces that ownership model.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">chown [options] user[:group] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">chown -R appuser:appgroup /opt/app</div><div class="example-line">chown nginx:nginx /var/log/nginx</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">chgrp</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Change the group ownership of a file. Useful when multiple services share access to a common resource via group membership.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">chgrp [options] group file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">chgrp -R www-data /var/www</div><div class="example-line">chgrp docker /var/run/docker.sock</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">umask</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Set the default permission mask for newly created files. Used in shell profiles and service startup scripts to enforce secure defaults.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">umask [mask]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">umask 022  # new files: 644, dirs: 755</div><div class="example-line">umask 027  # stricter: new files: 640</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">stat</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Display detailed file metadata including permissions, inode, owner, timestamps. Invaluable for debugging permission and config issues.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">stat [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">stat /etc/passwd</div><div class="example-line">stat -c '%A %U %G' /opt/app/config.yaml</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">getfacl / setfacl</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Get and set POSIX Access Control Lists — granular permission control beyond the traditional user/group/other model.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">getfacl file
+setfacl [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">getfacl /opt/app/data</div><div class="example-line">setfacl -m u:deploy:rw /opt/shared/config</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-2">
+    <div class="cat-header">
+      <div class="cat-number">03</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">⚙️</span>
+        <h2 class="cat-title">Process Management</h2>
+      </div>
+      <div class="cat-count">8 commands</div>
+    </div>
+    <p class="cat-desc">Monitor, control, and manage running processes. Essential for debugging hung services, resource contention, and graceful deployments.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">ps</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Snapshot of current running processes. ps aux is the classic DevOps command to identify what's consuming resources or confirm a service started.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ps [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ps aux | grep java</div><div class="example-line">ps -ef --sort=-%cpu | head -10</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">top / htop</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Real-time process monitor. htop provides a colorized, interactive view. Essential for diagnosing CPU/memory spikes during load tests.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">top [options]
+htop</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">top -bn1 | head -20  # non-interactive snapshot</div><div class="example-line">htop -u appuser  # filter by user</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">kill</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Send signals to processes by PID. SIGTERM (15) for graceful shutdown; SIGKILL (9) for forced termination.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">kill [signal] PID</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">kill -15 1234   # graceful stop</div><div class="example-line">kill -9 1234    # force kill</div><div class="example-line">kill -HUP $(cat /var/run/nginx.pid)</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">pkill</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Kill processes by pattern match on name or other attributes. More flexible than killall for scripted process management.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">pkill [options] pattern</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">pkill -f 'python app.py'</div><div class="example-line">pkill -u appuser  # kill all processes by user</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">nohup</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Run a command immune to hangups (SIGHUP). Keeps processes running after SSH session ends.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">nohup command [args] &amp;</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">nohup ./start-worker.sh &gt; worker.log 2&gt;&amp;1 &amp;</div><div class="example-line">nohup python3 app.py &amp;</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">nice / renice</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Start or change process CPU priority. Used to deprioritize background batch jobs during peak hours.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">nice -n value command
+renice -n value -p PID</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">nice -n 19 ./backup.sh</div><div class="example-line">renice -n 5 -p 3456</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="6">
+      <div class="cmd-header">
+        <span class="cmd-name">lsof</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">List open files and network connections by processes. Critical for diagnosing 'port already in use' errors.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">lsof [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">lsof -i :8080  # who's using port 8080</div><div class="example-line">lsof -p 1234   # files opened by PID 1234</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="7">
+      <div class="cmd-header">
+        <span class="cmd-name">strace</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Trace system calls made by a process. Powerful debugging tool to understand why a program fails — shows every file open, network call, and syscall.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">strace [options] command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">strace -p 1234  # attach to running process</div><div class="example-line">strace -e trace=network curl example.com</div><div class="example-line">strace -o trace.log ./app</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-3">
+    <div class="cat-header">
+      <div class="cat-number">04</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">📊</span>
+        <h2 class="cat-title">System Monitoring</h2>
+      </div>
+      <div class="cat-count">8 commands</div>
+    </div>
+    <p class="cat-desc">Observe resource utilization, uptime, and hardware health to keep production systems stable.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">vmstat</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Report virtual memory, CPU, I/O statistics. Use for identifying memory pressure and CPU wait times affecting application performance.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">vmstat [options] [delay] [count]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">vmstat 2 5   # 5 snapshots, 2s apart</div><div class="example-line">vmstat -s    # summary stats</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">iostat</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Show CPU and disk I/O statistics. Identify disk bottlenecks causing slow reads/writes in database or file-heavy applications.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">iostat [options] [delay] [count]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">iostat -xz 1 5</div><div class="example-line">iostat -d -h /dev/sda</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">free</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Display memory usage (RAM + swap). Essential health check — low free memory often explains application slowdowns or OOM kills.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">free [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">free -h        # human readable</div><div class="example-line">free -m -s 3   # update every 3 seconds</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">uptime</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Show system uptime and load averages (1, 5, 15 minutes). High load average relative to CPU count indicates a saturated system.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">uptime</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">uptime</div><div class="example-line">cat /proc/loadavg</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">df</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Show disk filesystem usage. Full disks cause application crashes — always monitor disk space, especially log and data volumes.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">df [options] [filesystem]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">df -h</div><div class="example-line">df -h /var/log</div><div class="example-line">df -i  # inode usage</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">du</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Estimate disk usage of files and directories. Use to find what's consuming disk space when a volume fills unexpectedly.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">du [options] [directory]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">du -sh /var/log/*</div><div class="example-line">du -h --max-depth=1 /opt | sort -h</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="6">
+      <div class="cmd-header">
+        <span class="cmd-name">dmesg</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Print kernel ring buffer messages. First stop for diagnosing hardware errors, OOM kills, disk failures, and kernel panics.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">dmesg [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">dmesg | tail -50</div><div class="example-line">dmesg -T | grep -i error</div><div class="example-line">dmesg --level=err,warn</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="7">
+      <div class="cmd-header">
+        <span class="cmd-name">watch</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Execute a command repeatedly and display output. Great for monitoring changing metrics without writing a loop.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">watch [options] command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">watch -n 2 'df -h'</div><div class="example-line">watch -d 'cat /proc/loadavg'  # highlight changes</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-4">
+    <div class="cat-header">
+      <div class="cat-number">05</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🌐</span>
+        <h2 class="cat-title">Networking</h2>
+      </div>
+      <div class="cat-count">10 commands</div>
+    </div>
+    <p class="cat-desc">Configure, test, and diagnose network connectivity — the backbone of all distributed DevOps infrastructure.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">ip</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Modern replacement for ifconfig/route. View and configure network interfaces, routes, and addresses. The go-to tool for network config in modern Linux.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ip [options] object command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ip addr show</div><div class="example-line">ip route show</div><div class="example-line">ip link set eth0 up</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">ss</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Socket statistics — faster, more detailed replacement for netstat. Check listening ports, established connections, and socket states.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ss [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ss -tulnp  # listening TCP/UDP with process</div><div class="example-line">ss -s      # summary</div><div class="example-line">ss -t state established</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">ping</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Test ICMP reachability to a host. Basic connectivity check to verify network paths and measure round-trip latency.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ping [options] host</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ping -c 4 google.com</div><div class="example-line">ping -i 0.2 -c 100 192.168.1.1</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">traceroute</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Trace the network path to a destination. Identify where packets are dropped or slow — essential for network troubleshooting.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">traceroute [options] host</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">traceroute -n google.com</div><div class="example-line">tracepath api.example.com</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">dig</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">DNS lookup tool. Verify DNS records, propagation, and resolver behavior — critical when deploying new services or debugging DNS issues.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">dig [options] name [type]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">dig api.example.com A</div><div class="example-line">dig @8.8.8.8 example.com MX</div><div class="example-line">dig +short example.com</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">curl</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Transfer data to/from URLs. The Swiss Army knife of HTTP testing — health checks, API calls, file downloads, header inspection.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">curl [options] URL</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">curl -I https://api.example.com/health</div><div class="example-line">curl -X POST -H 'Content-Type: application/json' -d '{&quot;key&quot;:&quot;val&quot;}' https://api.example.com</div><div class="example-line">curl -o output.tar.gz https://releases.example.com/v1.2.tar.gz</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="6">
+      <div class="cmd-header">
+        <span class="cmd-name">wget</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Non-interactive file downloader. Supports recursive downloads and resuming interrupted transfers.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">wget [options] URL</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">wget -q -O /tmp/app.jar https://releases.example.com/app-1.0.jar</div><div class="example-line">wget -c --retry-connrefused https://large-file.example.com/data.zip</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="7">
+      <div class="cmd-header">
+        <span class="cmd-name">nmap</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Network port scanner. Discover open ports and services on remote hosts — essential for security audits and firewall validation.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">nmap [options] target</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">nmap -sV -p 22,80,443 192.168.1.0/24</div><div class="example-line">nmap -A --script=default 10.0.0.1</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="8">
+      <div class="cmd-header">
+        <span class="cmd-name">tcpdump</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Capture and analyze network packets. Diagnose connection issues and validate TLS/HTTP communication at the packet level.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">tcpdump [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">tcpdump -i eth0 -n port 443</div><div class="example-line">tcpdump -i any host 10.0.0.5 -w capture.pcap</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="9">
+      <div class="cmd-header">
+        <span class="cmd-name">iptables</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Linux firewall management. Control packet filtering, NAT, and port forwarding. nftables is the modern successor.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">iptables [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">iptables -L -n -v</div><div class="example-line">iptables -A INPUT -p tcp --dport 8080 -j ACCEPT</div><div class="example-line">nft list ruleset</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-5">
+    <div class="cat-header">
+      <div class="cat-number">06</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">💾</span>
+        <h2 class="cat-title">Disk &amp; Storage</h2>
+      </div>
+      <div class="cat-count">6 commands</div>
+    </div>
+    <p class="cat-desc">Manage block devices, filesystems, volumes, and storage — critical for persistent data management in production environments.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">lsblk</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">List block devices in a tree view. Quickly see disks, partitions, and mount points — essential when provisioning storage.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">lsblk [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">lsblk</div><div class="example-line">lsblk -f  # show filesystems</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">fdisk / parted</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Create and manage disk partitions. fdisk is classic for MBR; parted handles both MBR and GPT and is required for disks &gt;2TB.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">fdisk [options] device
+parted [device]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">fdisk -l</div><div class="example-line">parted /dev/sdb print</div><div class="example-line">parted /dev/sdb mklabel gpt</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">mkfs</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Format a partition with a filesystem. Use after creating a partition before mounting — choose ext4 for general use, xfs for large files.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">mkfs.[type] [options] device</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">mkfs.ext4 /dev/sdb1</div><div class="example-line">mkfs.xfs /dev/sdc1</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">mount / umount</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Attach or detach filesystems. Mount remote NFS shares, loop devices, or new disks to specific directories.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">mount [options] device mountpoint</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">mount /dev/sdb1 /mnt/data</div><div class="example-line">mount -t nfs 10.0.0.5:/exports /mnt/nfs</div><div class="example-line">umount /mnt/data</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">dd</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Low-level copy of raw data. Used for disk imaging, benchmarking I/O, creating swap files, and wiping disks. Double-check of= before running.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">dd [operands]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">dd if=/dev/zero of=/swapfile bs=1M count=2048</div><div class="example-line">dd if=/dev/sda of=/backup/disk.img bs=4M status=progress</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">lvextend / resize2fs</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Extend a logical volume and then resize the filesystem. Expand disk space for growing application data volumes without downtime.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">lvextend -L +size LV
+resize2fs device</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">lvextend -L +20G /dev/vg0/data</div><div class="example-line">resize2fs /dev/vg0/data</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-6">
+    <div class="cat-header">
+      <div class="cat-number">07</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">📦</span>
+        <h2 class="cat-title">Package Management</h2>
+      </div>
+      <div class="cat-count">5 commands</div>
+    </div>
+    <p class="cat-desc">Install, update, and remove software packages. Package managers vary by distribution — knowing the right tool is essential for provisioning and automation.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">apt / apt-get</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Debian/Ubuntu package manager. Used in most containerized and cloud Linux environments. apt is user-friendly; apt-get is preferred in scripts.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">apt [options] command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">apt update &amp;&amp; apt upgrade -y</div><div class="example-line">apt install -y curl wget git</div><div class="example-line">apt-get install --no-install-recommends nginx</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">yum / dnf</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">RHEL/CentOS/Fedora package manager. dnf is the modern replacement for yum. Essential for RHEL-based enterprise and cloud environments.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">dnf [options] command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">dnf update -y</div><div class="example-line">yum install -y java-17-openjdk</div><div class="example-line">dnf install --setopt=install_weak_deps=False nginx</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">rpm</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Low-level RPM package tool. Install, query, verify, and remove .rpm packages directly.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">rpm [options] package</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">rpm -ivh package.rpm</div><div class="example-line">rpm -qa | grep java</div><div class="example-line">rpm -qf /usr/bin/python3  # which package owns file</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">dpkg</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Debian low-level package tool. Directly install or query .deb packages. Used in Docker builds and CI pipelines.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">dpkg [options] package</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">dpkg -i package.deb</div><div class="example-line">dpkg -l | grep nginx</div><div class="example-line">dpkg -L nginx  # list files installed by package</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">pip3</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Python package installer. Critical in DevOps for installing Ansible, AWS CLI, linting tools, and other Python-based tooling.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">pip3 [options] command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">pip3 install ansible boto3</div><div class="example-line">pip3 install -r requirements.txt</div><div class="example-line">pip3 list --outdated</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-7">
+    <div class="cat-header">
+      <div class="cat-number">08</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">👤</span>
+        <h2 class="cat-title">Users &amp; Groups</h2>
+      </div>
+      <div class="cat-count">6 commands</div>
+    </div>
+    <p class="cat-desc">Manage user accounts and group memberships — foundational for role-based access control (RBAC) on Linux servers.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">useradd</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Create new user accounts. Use for creating service accounts in provisioning scripts.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">useradd [options] username</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">useradd -m -s /bin/bash -G docker appuser</div><div class="example-line">useradd -r -s /sbin/nologin -d /opt/app appservice  # system account</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">usermod</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Modify an existing user's properties — groups, shell, home directory. Commonly used to add users to the docker or sudo group.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">usermod [options] username</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">usermod -aG docker ubuntu</div><div class="example-line">usermod -aG sudo,adm deployuser</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">passwd</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Set or change user passwords. Also used to lock/unlock accounts. Prefer SSH keys over passwords for service accounts.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">passwd [options] [username]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">passwd deploy</div><div class="example-line">passwd -l serviceacct  # lock account</div><div class="example-line">echo 'user:password' | chpasswd  # non-interactive</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">id</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Show user and group identity (UID/GID). Quickly verify which groups a user belongs to — important for confirming docker/sudo access.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">id [username]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">id</div><div class="example-line">id ubuntu  # check another user</div><div class="example-line">id -nG appuser  # list group names only</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">sudo / su</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Execute commands as another user. sudo is the standard for privilege escalation — always audit sudoers file in production.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">sudo [options] command
+su [options] [username]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">sudo systemctl restart nginx</div><div class="example-line">sudo -u appuser ./run.sh</div><div class="example-line">su - postgres</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">who / w / last</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Show currently logged-in users and login history. Essential for security auditing and tracking unauthorized access.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">who
+w
+last [username]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">who</div><div class="example-line">w  # detailed with what they're running</div><div class="example-line">last -20  # last 20 logins</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-8">
+    <div class="cat-header">
+      <div class="cat-number">09</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🔍</span>
+        <h2 class="cat-title">Logs &amp; Troubleshooting</h2>
+      </div>
+      <div class="cat-count">5 commands</div>
+    </div>
+    <p class="cat-desc">Analyze and follow logs to diagnose incidents in real time — the most critical skill for production support and SRE work.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">tail</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Output the last N lines of a file. tail -f follows a log in real time — the most-used command during deployments and incident response.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">tail [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">tail -f /var/log/nginx/error.log</div><div class="example-line">tail -n 200 /var/log/app/app.log</div><div class="example-line">tail -f /var/log/syslog | grep ERROR</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">journalctl</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Query systemd's centralized journal. The primary tool for reading service logs on modern Linux — supports filtering by unit, time, and priority.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">journalctl [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">journalctl -u nginx -f  # follow nginx logs</div><div class="example-line">journalctl --since '1 hour ago' -p err</div><div class="example-line">journalctl -u app.service --no-pager | tail -100</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">grep</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Search text using patterns. Combine with tail/cat to filter logs for specific errors, IP addresses, or request IDs.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">grep [options] pattern file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">grep -i 'error|exception' /var/log/app.log</div><div class="example-line">grep -n 'FATAL' app.log | tail -20</div><div class="example-line">journalctl -u app | grep '500'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">less</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Page through file contents. Allows bidirectional scrolling. Essential for reading large log files without loading them into memory.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">less [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">less +F /var/log/syslog  # follow mode like tail -f</div><div class="example-line">less -S /var/log/large.log  # no line wrap</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">logger</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Write messages to the system log. Use in shell scripts to record deployment events and errors into syslog for centralized monitoring.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">logger [options] message</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">logger -t deploy 'Deployment started for v1.2.3'</div><div class="example-line">logger -p local0.info 'Backup completed successfully'</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-9">
+    <div class="cat-header">
+      <div class="cat-number">10</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">📝</span>
+        <h2 class="cat-title">Text Processing</h2>
+      </div>
+      <div class="cat-count">7 commands</div>
+    </div>
+    <p class="cat-desc">Parse, transform, and extract data from text files and command output — essential for log analysis and config generation.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">awk</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Pattern scanning and text processing language. Extract columns, calculate sums, and reformat structured text output.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">awk [options] 'program' file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">awk '{print $1, $4}' access.log</div><div class="example-line">awk -F: '{print $1}' /etc/passwd  # list usernames</div><div class="example-line">df -h | awk 'NR&gt;1 {print $5, $6}'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">sed</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Stream editor for in-place text substitution and deletion. Ideal for modifying config files and replacing placeholders in templates.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">sed [options] 'expression' file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">sed -i 's/localhost/db.prod.example.com/g' app.conf</div><div class="example-line">sed -n '10,50p' large.log  # print lines 10-50</div><div class="example-line">sed '/^#/d' config.conf  # remove comment lines</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">cut</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Cut sections from lines of files. Extract delimited fields from CSV-like data or command output quickly.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">cut [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">cut -d: -f1,3 /etc/passwd</div><div class="example-line">echo '2024-01-15 INFO Starting' | cut -d' ' -f3-</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">sort</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Sort lines of text. Use with uniq to count occurrences in logs, or with -k and -n for numeric/column-based sorting.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">sort [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">sort -k5 -n -r access.log | head</div><div class="example-line">sort -u file.txt  # sort + deduplicate</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">uniq</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Filter or report duplicate lines. Always pipe sorted input to uniq. Use -c to count occurrences — great for log frequency analysis.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">uniq [options] [input]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">sort errors.log | uniq -c | sort -rn | head -20</div><div class="example-line">cat ips.txt | sort | uniq -d  # show duplicate IPs</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">wc</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Count words, lines, characters. Use wc -l to count lines in a file — common in scripts to verify record counts after processing.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">wc [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">wc -l /etc/hosts</div><div class="example-line">grep 'ERROR' app.log | wc -l  # count error lines</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="6">
+      <div class="cmd-header">
+        <span class="cmd-name">tr</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Translate or delete characters. Use for case conversion, removing carriage returns from Windows files, or collapsing whitespace.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">tr [options] SET1 [SET2]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">echo 'Hello World' | tr '[:upper:]' '[:lower:]'</div><div class="example-line">cat windows.txt | tr -d '\r' &gt; unix.txt</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-10">
+    <div class="cat-header">
+      <div class="cat-number">11</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🔎</span>
+        <h2 class="cat-title">Searching &amp; Filtering</h2>
+      </div>
+      <div class="cat-count">5 commands</div>
+    </div>
+    <p class="cat-desc">Locate files, patterns, and content efficiently across filesystems and data streams.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">grep -r</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Recursively search for patterns across all files in a directory tree. Essential for finding config values, secrets, or code patterns across a project.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">grep -r [options] pattern directory</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">grep -r 'database_url' /etc/app/</div><div class="example-line">grep -rn 'TODO' ./src --include='*.py'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">find</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Search for files by name, type, size, time, or permissions. Supports -exec to act on results — more powerful than locate for scripting.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">find path [expression]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">find /opt -name '*.conf' -newer /opt/last-deploy</div><div class="example-line">find /tmp -type f -mmin +60 -delete</div><div class="example-line">find / -user root -perm -4000 -print  # SUID files</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">locate</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Fast file search using a pre-built database index. Much faster than find for name searches — run updatedb to refresh the index.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">locate [options] pattern</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">locate nginx.conf</div><div class="example-line">locate -i '*.jar'  # case-insensitive</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">which / whereis</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Find the location of executable commands. Essential for confirming which binary will run in your PATH when multiple versions coexist.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">which command
+whereis command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">which python3</div><div class="example-line">whereis java</div><div class="example-line">type kubectl</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">xargs</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Build and execute commands from standard input. Chain with find or grep to perform bulk operations on matched files.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">xargs [options] command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">find /opt -name '*.log' | xargs rm -f</div><div class="example-line">grep -rl 'old-host' /etc/ | xargs sed -i 's/old-host/new-host/g'</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-11">
+    <div class="cat-header">
+      <div class="cat-number">12</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🗜️</span>
+        <h2 class="cat-title">Archiving &amp; Compression</h2>
+      </div>
+      <div class="cat-count">4 commands</div>
+    </div>
+    <p class="cat-desc">Pack, compress, and extract files for deployments, backups, and artifact transfers.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">tar</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Tape archive tool — pack multiple files into a single archive. The standard for distributing application artifacts and creating backups in Linux.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">tar [options] archive [files]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">tar -czvf app-v1.2.tar.gz /opt/app/</div><div class="example-line">tar -xzvf release.tar.gz -C /opt/</div><div class="example-line">tar -tzvf archive.tar.gz  # list contents without extracting</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">gzip / gunzip</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Compress or decompress individual files using the gzip algorithm. Most commonly used with tar (tar -z).</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">gzip [options] file
+gunzip file.gz</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">gzip -k -9 large-log.log  # keep original, max compression</div><div class="example-line">gunzip -c data.gz | grep 'ERROR'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">zip / unzip</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Cross-platform archive format. Required when creating archives for Windows users or tools that expect .zip (e.g., AWS Lambda deployments).</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">zip [options] archive.zip files
+unzip archive.zip</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">zip -r lambda-deploy.zip ./function/ -x '*.git*'</div><div class="example-line">unzip -o release.zip -d /opt/app/</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">rsync</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Efficient file synchronization with delta transfer. Essential for deployments, backups, and syncing across servers — only transfers changed bytes.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">rsync [options] source destination</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">rsync -avz --delete /opt/app/ user@prod:/opt/app/</div><div class="example-line">rsync -avzP --exclude='.git' ./ server:/opt/project/</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-12">
+    <div class="cat-header">
+      <div class="cat-number">13</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🔑</span>
+        <h2 class="cat-title">SSH &amp; Remote Access</h2>
+      </div>
+      <div class="cat-count">5 commands</div>
+    </div>
+    <p class="cat-desc">Securely connect to and manage remote servers — the primary interface for cloud infrastructure management.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">ssh</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Open Secure Shell connections to remote hosts. The primary way to access cloud instances, jump hosts, and remote servers.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ssh [options] user@host</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ssh ubuntu@10.0.0.5</div><div class="example-line">ssh -i ~/.ssh/deploy.pem ec2-user@ec2-54-x.compute.amazonaws.com</div><div class="example-line">ssh -L 8080:localhost:8080 user@bastion.example.com  # port forward</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">ssh-keygen</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Generate SSH key pairs. Create ed25519 keys for secure, passwordless authentication to servers and CI/CD systems.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ssh-keygen [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ssh-keygen -t ed25519 -C 'deploy@ci' -f ~/.ssh/deploy_key</div><div class="example-line">ssh-keygen -t rsa -b 4096 -N ''  # no passphrase for automation</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">ssh-copy-id</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Copy SSH public key to remote host's authorized_keys. Simplifies setting up passwordless SSH access without manually editing files.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ssh-copy-id [options] user@host</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ssh-copy-id -i ~/.ssh/id_ed25519.pub ubuntu@192.168.1.5</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">scp</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Securely copy files between hosts using SSH. Use for one-off file transfers — for repetitive sync, prefer rsync.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">scp [options] source user@host:dest</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">scp -i key.pem ./config.yaml ubuntu@server:/etc/app/</div><div class="example-line">scp -r ubuntu@server:/var/log/app ./logs/</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">tmux</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Terminal multiplexer — maintain persistent sessions that survive SSH disconnections. Essential for long-running deployments and remote work.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">tmux [command]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">tmux new -s deploy</div><div class="example-line">tmux attach -t deploy</div><div class="example-line">tmux split-window -h  # horizontal split</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-13">
+    <div class="cat-header">
+      <div class="cat-number">14</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🔧</span>
+        <h2 class="cat-title">Service Management (systemd)</h2>
+      </div>
+      <div class="cat-count">6 commands</div>
+    </div>
+    <p class="cat-desc">Manage system services and daemons using systemd — the standard init system on modern Linux distributions.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">systemctl start/stop/restart</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Start, stop, or restart systemd services. The fundamental commands for service lifecycle management in production.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">systemctl [start|stop|restart] service</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">systemctl restart nginx</div><div class="example-line">systemctl stop postgresql</div><div class="example-line">systemctl start docker</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">systemctl enable/disable</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Enable or disable a service to start automatically at boot. Always enable critical services after installation.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">systemctl [enable|disable] service</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">systemctl enable --now docker  # enable and start immediately</div><div class="example-line">systemctl disable --now postfix</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">systemctl status</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Show the current state of a service including recent logs, PID, uptime, and exit codes. First command to run when a service fails.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">systemctl status service</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">systemctl status nginx</div><div class="example-line">systemctl status app.service -l  # full output</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">systemctl daemon-reload</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Reload systemd manager configuration after modifying or adding unit files. Required every time you edit a .service file.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">systemctl daemon-reload</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">systemctl daemon-reload</div><div class="example-line">systemctl daemon-reload &amp;&amp; systemctl restart app</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">journalctl -u</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">View logs for a specific systemd service unit. The primary tool for service log inspection on modern Linux systems.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">journalctl -u service [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">journalctl -u nginx -f  # follow</div><div class="example-line">journalctl -u app.service --since '30 min ago'</div><div class="example-line">journalctl -u docker -n 100 --no-pager</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">systemctl list-units</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">List all active systemd units. Use to audit running services, find failed units, or check what's consuming resources.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">systemctl list-units [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">systemctl list-units --type=service --state=running</div><div class="example-line">systemctl list-units --state=failed</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-14">
+    <div class="cat-header">
+      <div class="cat-number">15</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">⏰</span>
+        <h2 class="cat-title">Cron Jobs &amp; Automation</h2>
+      </div>
+      <div class="cat-count">4 commands</div>
+    </div>
+    <p class="cat-desc">Schedule recurring tasks for backups, cleanups, deployments, and health checks.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">crontab</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Edit and manage the cron job table. Schedule recurring tasks using cron syntax: minute hour day month weekday.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">crontab [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">crontab -e  # edit cron jobs</div><div class="example-line">crontab -l  # list current jobs</div><div class="example-line">crontab -u appuser -l  # list for specific user</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">cron syntax</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Five-field time expression: minute (0-59), hour (0-23), day-of-month (1-31), month (1-12), day-of-week (0-7).</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">MIN HOUR DOM MON DOW command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">0 2 * * * /opt/scripts/backup.sh  # daily at 2am</div><div class="example-line">*/5 * * * * /opt/scripts/health-check.sh  # every 5 min</div><div class="example-line">0 0 * * 0 /opt/scripts/weekly-cleanup.sh  # every Sunday</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">at</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Schedule a one-time task for future execution. Simpler than cron for non-recurring maintenance tasks.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">at [time]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">echo '/opt/scripts/deploy.sh' | at 2am tomorrow</div><div class="example-line">at now + 30 minutes &lt;&lt;&lt; '/opt/scripts/cleanup.sh'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">systemd timers</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Modern cron alternative using systemd — more reliable, with better logging and dependency control.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">[Timer]
+OnCalendar=*-*-* 02:00:00
+Persistent=true</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">systemctl list-timers  # list all timers</div><div class="example-line">systemctl enable --now backup.timer</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-15">
+    <div class="cat-header">
+      <div class="cat-number">16</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🌿</span>
+        <h2 class="cat-title">Environment Variables</h2>
+      </div>
+      <div class="cat-count">5 commands</div>
+    </div>
+    <p class="cat-desc">Configure runtime behavior through environment variables — critical for 12-factor app configuration and secret management.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">export</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Set an environment variable and export it to child processes. Variables without export are only visible to the current shell.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">export VARIABLE=value</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">export APP_ENV=production</div><div class="example-line">export PATH=$PATH:/opt/custom/bin</div><div class="example-line">export DATABASE_URL='postgresql://user:pass@host/db'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">env</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Print all environment variables or run a command with a modified environment. Use to inspect the runtime environment.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">env [options] [command]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">env  # print all vars</div><div class="example-line">env | grep -i 'java|path'</div><div class="example-line">env APP_ENV=test ./run-tests.sh</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">printenv</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Print specific environment variable values. Cleaner than echo for checking variable values in scripts.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">printenv [VARIABLE]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">printenv HOME</div><div class="example-line">printenv DATABASE_URL</div><div class="example-line">printenv | sort</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">unset</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Remove an environment variable from the current shell session. Use to clear secrets from the environment after use.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">unset VARIABLE</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">unset AWS_SECRET_ACCESS_KEY</div><div class="example-line">unset -f function_name  # unset a function</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">.env files</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Store environment variables for local development. Never commit .env files with secrets to version control.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">VARIABLE=value  (one per line)</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">set -a &amp;&amp; source .env &amp;&amp; set +a  # load .env in bash</div><div class="example-line">export $(grep -v '^#' .env | xargs)</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-16">
+    <div class="cat-header">
+      <div class="cat-number">17</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">📜</span>
+        <h2 class="cat-title">Shell Scripting Basics</h2>
+      </div>
+      <div class="cat-count">6 commands</div>
+    </div>
+    <p class="cat-desc">Automate tasks with Bash scripts — from simple utilities to complex deployment pipelines.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">shebang + set -euo pipefail</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">The shebang specifies the interpreter. set -euo pipefail enables strict mode: -e exits on error, -u errors on unset variables, -o pipefail catches pipe failures.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">#!/usr/bin/env bash
+set -euo pipefail</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">#!/usr/bin/env bash</div><div class="example-line">set -euo pipefail  # add after shebang in all prod scripts</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">variables &amp; arrays</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Store and manipulate data. Bash arrays hold lists of values — use for managing multiple filenames, hostnames, or arguments.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">VAR=value
+ARR=(a b c)
+${ARR[@]}</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">SERVERS=(web1 web2 web3)</div><div class="example-line">for s in &quot;${SERVERS[@]}&quot;; do ssh $s './health.sh'; done</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">if / elif / else</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Conditional branching. Handle errors, check command exit codes, and validate environment before running destructive operations.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">if [[ condition ]]; then
+  ...
+elif [[ condition ]]; then
+  ...
+fi</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">if [[ $APP_ENV == 'production' ]]; then echo 'PROD'; fi</div><div class="example-line">if ! systemctl is-active nginx; then systemctl start nginx; fi</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">for / while loops</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Iterate over items or repeat until a condition changes. Common in deployment scripts operating on multiple servers or files.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">for VAR in list; do ...; done
+while condition; do ...; done</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">for f in /opt/app/*.conf; do validate_config $f; done</div><div class="example-line">while ! nc -z db 5432; do sleep 1; done  # wait for DB</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">functions</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Reusable blocks of script logic. Define functions for repeated operations like logging, error handling, and service checks.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">function_name() {
+  local var=$1
+  ...
+}</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">log() { echo &quot;[$(date '+%F %T')] $*&quot; &gt;&gt; /var/log/deploy.log; }</div><div class="example-line">check_service() { systemctl is-active $1 || { log &quot;$1 down&quot;; exit 1; }; }</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">trap</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Execute code when a signal is received or the script exits. Use to clean up temp files, log failures, and ensure rollbacks happen on error.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">trap 'command' SIGNAL</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">trap 'rm -f /tmp/lock; echo Deploy failed' ERR EXIT</div><div class="example-line">trap 'cleanup' INT TERM</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-17">
+    <div class="cat-header">
+      <div class="cat-number">18</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">⚡</span>
+        <h2 class="cat-title">DevOps Productivity Commands</h2>
+      </div>
+      <div class="cat-count">6 commands</div>
+    </div>
+    <p class="cat-desc">Power tools that dramatically improve terminal productivity for engineers managing complex infrastructure.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">jq</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">JSON processor for the command line. Parse, filter, and transform JSON from API responses, configuration files, and Kubernetes outputs.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">jq [options] filter [file]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">curl -s https://api/status | jq '.services[].name'</div><div class="example-line">aws ec2 describe-instances | jq '.Reservations[].Instances[].PublicIpAddress'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">yq</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">YAML/JSON processor — like jq but for YAML. Parse Kubernetes manifests, Helm values, and CI/CD configs programmatically.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">yq [options] expression [file]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">yq '.metadata.name' deployment.yaml</div><div class="example-line">yq '.spec.replicas = 3' -i deployment.yaml</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">fzf</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Fuzzy finder for interactive command-line search. Speed up history search, file navigation, and selecting from lists interactively.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">fzf [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">history | fzf  # fuzzy search history</div><div class="example-line">kubectl get pods | fzf | awk '{print $1}' | xargs kubectl describe pod</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">tee</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Read from stdin and write to both stdout and a file simultaneously. Captures command output while still displaying it in the terminal.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">command | tee [options] file</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">./deploy.sh 2&gt;&amp;1 | tee -a /var/log/deploy.log</div><div class="example-line">kubectl apply -f . | tee deploy-output.txt</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">alias</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Create command shortcuts. Define aliases for long commands in ~/.bashrc to speed up repetitive tasks.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">alias name='command'</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">alias k='kubectl'</div><div class="example-line">alias ll='ls -lah'</div><div class="example-line">alias gs='git status'</div><div class="example-line">alias dc='docker-compose'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">time</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Measure the execution time of a command. Use to benchmark scripts, identify slow steps in CI pipelines, or compare optimizations.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">time command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">time ./run-tests.sh</div><div class="example-line">time docker build -t myapp:latest .</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-18">
+    <div class="cat-header">
+      <div class="cat-number">19</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🐳</span>
+        <h2 class="cat-title">Kubernetes &amp; Docker Linux Commands</h2>
+      </div>
+      <div class="cat-count">7 commands</div>
+    </div>
+    <p class="cat-desc">Linux-level commands and techniques essential for working with containerized applications and orchestration platforms.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">docker ps / inspect</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">List running containers and inspect their configuration, networking, and mounts. Foundation of Docker troubleshooting on the host.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">docker ps [options]
+docker inspect [container/image]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">docker ps -a --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'</div><div class="example-line">docker inspect app-container | jq '.[0].NetworkSettings.Networks'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">docker logs</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Fetch container stdout/stderr logs. Essential for debugging containers that crash on startup before a log collector is configured.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">docker logs [options] container</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">docker logs -f --tail 100 app-container</div><div class="example-line">docker logs --since 30m app-container 2&gt;&amp;1 | grep ERROR</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">docker exec</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Execute a command inside a running container. Use to debug container filesystems, test network connectivity, and inspect running state.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">docker exec [options] container command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">docker exec -it app-container bash</div><div class="example-line">docker exec app-container env | grep -i 'db'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">nsenter</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Enter Linux namespaces of a running container or process. Used for low-level debugging without a shell in the container image.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">nsenter -t PID -n command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">nsenter -t $(docker inspect -f '{{.State.Pid}}' app) -n ip addr</div><div class="example-line">nsenter --target 1234 --mount --uts --ipc --net --pid</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">kubectl exec / logs</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Execute commands inside Kubernetes pods and stream their logs. The primary way to debug running workloads in Kubernetes.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">kubectl exec -it pod -- command
+kubectl logs pod</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">kubectl exec -it deploy/app -- bash</div><div class="example-line">kubectl logs -f -l app=api --all-containers=true</div><div class="example-line">kubectl logs pod --previous  # crashed container logs</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">crictl</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">CRI CLI tool. Inspect and manage containers directly through the runtime (containerd, CRI-O) on Kubernetes nodes.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">crictl [command]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">crictl ps  # list containers on node</div><div class="example-line">crictl logs container-id</div><div class="example-line">crictl inspect container-id | jq '.status'</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="6">
+      <div class="cmd-header">
+        <span class="cmd-name">ip netns</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Manage and inspect Linux network namespaces — the kernel feature that isolates container networking from the host.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">ip netns [command]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">ip netns list</div><div class="example-line">ip netns exec container-ns ip addr</div><div class="example-line">ip netns exec container-ns ss -tulnp</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <section class="category" id="cat-19">
+    <div class="cat-header">
+      <div class="cat-number">20</div>
+      <div class="cat-title-block">
+        <span class="cat-icon">🚀</span>
+        <h2 class="cat-title">CI/CD Troubleshooting Commands</h2>
+      </div>
+      <div class="cat-count">8 commands</div>
+    </div>
+    <p class="cat-desc">Diagnose and fix common failures in continuous integration and deployment pipelines.</p>
+    <div class="commands-grid">
+      
+    <div class="cmd-card" data-idx="0">
+      <div class="cmd-header">
+        <span class="cmd-name">set -x (xtrace)</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Enable shell debug mode — prints each command before executing. Add to the top of failing CI scripts to trace exactly where they break.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">set -x
+bash -x ./script.sh</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">bash -x ./deploy.sh  # debug without modifying script</div><div class="example-line">set -x; npm install; set +x  # trace specific section</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="1">
+      <div class="cmd-header">
+        <span class="cmd-name">timeout</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Run a command with a time limit. Prevent CI jobs from hanging indefinitely when a service or external call never responds.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">timeout [duration] command</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">timeout 60 ./wait-for-db.sh</div><div class="example-line">timeout 300 ./run-integration-tests.sh || { echo 'Timed out'; exit 1; }</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="2">
+      <div class="cmd-header">
+        <span class="cmd-name">curl health checks</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Test service health endpoints in CI pipelines. Validate deployments automatically before marking a build as successful.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">curl -sf --retry N URL</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">curl -sf --retry 5 --retry-delay 3 http://localhost:8080/health</div><div class="example-line">curl -sf -o /dev/null -w '%{http_code}' https://api.example.com/status | grep 200</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="3">
+      <div class="cmd-header">
+        <span class="cmd-name">nc (netcat)</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Test TCP/UDP port connectivity. Use in CI wait loops to check if a dependent service (database, Redis) is ready before running tests.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">nc [options] host port</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">nc -zv db.host.com 5432  # test DB port</div><div class="example-line">while ! nc -z redis 6379; do sleep 1; done  # wait for Redis</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="4">
+      <div class="cmd-header">
+        <span class="cmd-name">git log / git diff</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Inspect what changed between pipeline runs. Use in CI to generate changelogs, detect configuration drift, or find the commit that broke a build.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">git log [options]
+git diff [options]</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">git log --oneline -20</div><div class="example-line">git diff HEAD~1 HEAD -- Dockerfile</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="5">
+      <div class="cmd-header">
+        <span class="cmd-name">docker build --no-cache</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Force a completely fresh Docker image build ignoring cached layers. Use when a build succeeds locally but fails in CI due to stale cache.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">docker build --no-cache [options] .</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">docker build --no-cache -t app:$CI_COMMIT_SHA .</div><div class="example-line">docker build --no-cache --pull -t app:latest .</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="6">
+      <div class="cmd-header">
+        <span class="cmd-name">chmod +x in CI</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Make scripts executable in CI. Scripts without execute permission fail with 'Permission denied' — fix with chmod or git update-index.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">chmod +x script.sh
+git update-index --chmod=+x script.sh</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">chmod +x ./scripts/*.sh</div><div class="example-line">git update-index --chmod=+x deploy.sh  # persist in git</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cmd-card" data-idx="7">
+      <div class="cmd-header">
+        <span class="cmd-name">tee for CI logging</span>
+      </div>
+      <div class="cmd-body">
+        <div class="purpose-row">
+          <span class="purpose-label">📌 Purpose</span>
+          <p class="purpose-text">Write CI job output to both the console and a log file simultaneously. Ensures build logs are archived and accessible after job completion.</p>
+        </div>
+        <div class="syntax-row">
+          <div class="syntax-label">Syntax</div>
+          <pre class="syntax-block">command 2&gt;&amp;1 | tee build.log</pre>
+          <div class="examples-label">Examples</div>
+          <div class="examples-block"><div class="example-line">./run-tests.sh 2&gt;&amp;1 | tee test-results.log</div><div class="example-line">make build 2&gt;&amp;1 | tee -a /var/log/ci/build-$(date +%Y%m%d).log</div></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+    <div class="no-results" id="noResults">No commands found. Try a different search term.</div>
+  </div>
+
+</main>
+
+<!-- Back to top -->
+<a href="#" class="back-top" id="backTop" title="Back to top">↑</a>
+
+<script>
+// Search
+const input = document.getElementById('searchInput');
+const allCards = document.querySelectorAll('.cmd-card');
+const allSections = document.querySelectorAll('.category');
+const noResults = document.getElementById('noResults');
+
+input.addEventListener('input', () => {
+  const q = input.value.toLowerCase().trim();
+  let any = false;
+  allSections.forEach(sec => {
+    let secVisible = false;
+    sec.querySelectorAll('.cmd-card').forEach(card => {
+      const txt = card.textContent.toLowerCase();
+      const show = !q || txt.includes(q);
+      card.style.display = show ? '' : 'none';
+      if (show) { secVisible = true; any = true; }
+    });
+    sec.style.display = secVisible || !q ? '' : 'none';
+  });
+  noResults.style.display = (!any && q) ? 'block' : 'none';
+});
+
+// Active nav on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      document.querySelectorAll('.nav-item').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.2 });
+allSections.forEach(s => observer.observe(s));
+
+// Back to top
+const backTop = document.getElementById('backTop');
+const main = document.getElementById('mainContent');
+main.addEventListener('scroll', () => {
+  backTop.classList.toggle('visible', main.scrollTop > 400);
+});
+backTop.addEventListener('click', e => {
+  e.preventDefault();
+  main.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Smooth scroll for nav clicks
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) {
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Stagger card animations
+document.querySelectorAll('.cmd-card').forEach((c, i) => {
+  c.style.animationDelay = (i % 10) * 30 + 'ms';
+});
+</script>
+</body>
+</html>
