@@ -8,17 +8,8 @@ The goal of this project was to understand how AWS services work together to del
 
 ## Architecture
 
-```
-User
-   │
-   ▼
-CloudFront (CDN)
-   │
-   ▼
-Private S3 Bucket
-```
+<img width="2720" height="880" alt="s3_cloudfront_architecture" src="https://github.com/user-attachments/assets/f72c7889-4efc-456c-bb65-29adee8f40ed" />
 
----
 
 ## AWS Services Used
 
